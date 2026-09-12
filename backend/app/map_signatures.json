@@ -1,0 +1,7 @@
+{
+  "_comment": "Dominant-color signatures for classify_map (app/media.py). These seed values are placeholders — replace each map's r/g/b with the average frame color of a real reference VOD for that map (e.g. sample a 5-minute VOD with ffmpeg and average it). The classifier is a nearest-neighbor on mean frame color, so real palettes improve accuracy without code changes.",
+  "ascent": { "r": 176.0, "g": 148.0, "b": 118.0 },
+  "haven": { "r": 96.0, "g": 132.0, "b": 156.0 },
+  "bind": { "r": 128.0, "g": 110.0, "b": 96.0 },
+  "split": { "r": 84.0, "g": 160.0, "b": 128.0 }
+}

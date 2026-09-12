@@ -1,0 +1,74 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: vct
+      POSTGRES_PASSWORD: vct
+      POSTGRES_DB: vctanalyzer
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vct -d vctanalyzer"]
+      interval: 3s
+      timeout: 3s
+      retries: 15
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 15
+
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://vct:vct@db:5432/vctanalyzer
+      REDIS_URL: redis://redis:6379/0
+      STORAGE_DIR: /data/vods
+      TWITCH_CLIENT_ID: ${TWITCH_CLIENT_ID:-}
+      TWITCH_CLIENT_SECRET: ${TWITCH_CLIENT_SECRET:-}
+      VLR_BASE_URL: ${VLR_BASE_URL:-}
+    volumes:
+      - voddata:/data
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "alembic upgrade head && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+  worker:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://vct:vct@db:5432/vctanalyzer
+      REDIS_URL: redis://redis:6379/0
+      STORAGE_DIR: /data/vods
+    volumes:
+      - voddata:/data
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A app.tasks.celery_app worker --loglevel=info --pool=solo
+
+  # Optional: vlrgg-scraper (github.com/akhilnarang/vlrgg-scraper) for
+  # auto-filling match info from vlr.gg. Uncomment to enable, then set
+  # VLR_BASE_URL=http://vlr:8000 on the api service above.
+  # vlr:
+  #   build: ../vlrgg-scraper
+  #   ports:
+  #     - "8100:8000"
+
+volumes:
+  pgdata:
+  voddata:

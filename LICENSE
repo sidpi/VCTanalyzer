@@ -1,6 +1,10 @@
 MIT License
 
+<<<<<<< HEAD
 Copyright (c) 2026 Siddhant Adityan
+=======
+Copyright (c) 2026 VCTanalyzer
+>>>>>>> 0459436 (VCTanalyzer: full-stack VOD tactical analysis platform (Phase 0-2 + ingest))
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
