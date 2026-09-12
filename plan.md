@@ -29,7 +29,7 @@ useful analytics → good visualization → AI.
 
 ### ✅ Phase 0 — Product foundation (COMPLETE)
 
-- Next.js 15 + React 19 + TypeScript + Tailwind v4 app with a custom design system
+- Next.js 16 + React 19 + TypeScript + Tailwind v4 app with a custom design system
 - Full route map: landing, auth, dashboard, teams, matches, processing, round viewer,
   analytics (heatmaps/movement/patterns), players, reports, admin, settings
 - Design system components (`ui.tsx`): cards, badges, tabs, stat cards, progress bars,

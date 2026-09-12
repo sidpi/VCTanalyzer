@@ -7,7 +7,7 @@
 Turn raw VOD footage into structured tactical data — player movement, round timelines,
 heatmaps, patterns, and evidence-linked scouting intelligence.
 
-`Next.js 15` · `React 19` · `TypeScript` · `Tailwind CSS v4` · `FastAPI` · `PostgreSQL` · `Celery/Redis` · `FFmpeg` · `yt-dlp`
+`Next.js 16` · `React 19` · `TypeScript` · `Tailwind CSS v4` · `FastAPI` · `PostgreSQL` · `Celery/Redis` · `FFmpeg` · `yt-dlp`
 
 </div>
 
@@ -62,6 +62,10 @@ drop a file → watch the processing pipeline → open a round in the tactical v
 
 ### Local development (no Docker)
 
+Start PostgreSQL and Redis first, then run the API and web app in separate
+terminals. The web app can render without the API, but login and registration
+require the API to be listening on `http://localhost:8000`.
+
 ```bash
 # Backend
 cd backend
@@ -75,6 +79,17 @@ uvicorn app.main:app --reload
 cd ../web
 npm install && npm run dev
 ```
+
+If Next reports a missing file under `web/.next/server`, stop any existing
+Next process, remove `web/.next`, and run `npm run dev` again. `.next` is
+generated build output and is safe to recreate.
+
+For the quickest setup, use Docker Desktop and run `docker compose up --build`
+from the repository root. This starts PostgreSQL, Redis, the seeded API, and
+the worker; wait for the API container to finish migrations and print that
+Uvicorn is listening before opening the web app. If Docker Desktop is stopped,
+the API cannot be reached and the login/register pages will show
+`Cannot reach the VCTanalyzer API. Is it running?`.
 
 See [`backend/README.md`](backend/README.md) for the full API reference.
 
@@ -106,7 +121,7 @@ See [`backend/README.md`](backend/README.md) for the full API reference.
 ## 📁 Repository layout
 
 ```
-├── web/          Next.js 15 app (App Router) — viewer, analytics, team management
+├── web/          Next.js 16 app (App Router) — viewer, analytics, team management
 ├── backend/      FastAPI + SQLAlchemy + Celery — API, worker, migrations
 │   ├── app/routers/    auth · catalog · vods · ingest · analytics
 │   ├── app/tasks.py    analysis pipeline (§48 stage machine)
